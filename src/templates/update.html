@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+
+  <div class="container">
+    <h1 class="display-4 text-center my-4">Update User</h1>
+    <div class="row">
+      <div class="col-md-4 offset-md-4 my-auto">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">Admin Users</h5>
+            <form action="/update/{{user._id}}" method="POST">
+              <div class="mb-3">
+                <input type="text" name="username" placeholder="Nombre" value="{{user.username}}" class="form-control"
+                  autofocus />
+              </div>
+              <div class="mb-3">
+                <input type="text" name="email" placeholder="Email" value="{{user.email}}" class="form-control"
+                  autofocus />
+              </div>
+              <div class="mb-3">
+                <input type="text" name="password" placeholder="Contraseña" value="{{user.password}}"
+                  class="form-control" autofocus />
+              </div>
+
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-outline-dark">
+                  Actualizar
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endblock %}

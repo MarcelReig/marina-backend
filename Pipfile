@@ -8,6 +8,8 @@ flask = "*"
 flask-pymongo = "*"
 flask-cors = "*"
 requests = "*"
+flask-login = "*"
+flask-wtf = "*"
 
 [dev-packages]
 
