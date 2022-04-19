@@ -1,4 +1,13 @@
-from flask import Flask, request, jsonify, Response, render_template, redirect, url_for, session
+from flask import (
+    Flask,
+    request,
+    jsonify,
+    Response,
+    render_template,
+    redirect,
+    url_for,
+    session,
+)
 from flask_pymongo import PyMongo
 from bson import json_util
 from bson.objectid import ObjectId
@@ -14,42 +23,57 @@ app.config["MONGO_URI"] = "mongodb://localhost/marinaDatabase"
 
 mongo = PyMongo(app)
 
-app.secret_key = '6+8zZ69dzChLZCU9h=XE+Gren}fnRV'
+app.secret_key = "6+8zZ69dzChLZCU9h=XE+Gren}fnRV"
 
-# Routes
+
+######################
+####    Routes
+#####################
 
 
 @app.route("/")
 def index():
-    return render_template('login.html')
+    return render_template("login.html")
 
 
+######################
+####    Login
+#####################
 @app.route("/login", methods=["GET", "POST"])
 def login():
-   
+
     if request.method == "POST":
-        session['user'] = request.form["email"]
-        session['password'] = request.form["password"]
+        session["user"] = request.form["email"]
+        session["password"] = request.form["password"]
         return redirect(url_for("portfolioManager"))
     else:
         return "bad request"
 
-@app.route('/logout')
+
+@app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("index"))
 
 
+#######################################
+####    If Login redirect to manager
+######################################
 @app.route("/manager")
 def portfolioManager():
+    # Comparar el email y la contraseña del formulario con la base de datos
+    # Añadir encriptacion a la contraseña con generate_password_hash
 
-    if session['user'] == "marcel@ibm.com" and session['password'] == "abcd1234":
+    if session["user"] == "marcel@ibm.com" and session["password"] == "abcd1234":
         users = mongo.db.users.find()
         return render_template("manager.html", users=users)
     else:
         return "You do not have permission to view this"
 
 
+#######################################
+####    Create users
+######################################
 @app.route("/users", methods=["POST"])
 def createUser():
     username = request.form["username"]
@@ -70,7 +94,9 @@ def createUser():
         return "not_found"
 
 
-# Get all users
+#######################################
+####    Get all users
+######################################
 @app.route("/users", methods=["GET"])
 def getUsers():
     users = mongo.db.users.find()
@@ -78,7 +104,9 @@ def getUsers():
     return Response(response, mimetype="application/json")
 
 
-# Get one user
+#######################################
+####    Get one user
+######################################
 @app.route("/users/<id>", methods=["GET"])
 def getUser(id):
     user = mongo.db.users.find_one({"_id": ObjectId(id)})
@@ -86,7 +114,9 @@ def getUser(id):
     return Response(response, mimetype="application/json")
 
 
-# Delete one user
+#######################################
+####    Delete one user
+######################################
 @app.route("/delete/<id>", methods=["DELETE", "GET"])
 def delete(id):
     mongo.db.users.delete_one({"_id": ObjectId(id)})
@@ -95,7 +125,9 @@ def delete(id):
     return redirect(url_for("portfolioManager"))
 
 
-# Update one user
+#######################################
+####    Update one user
+######################################
 @app.route("/update/<id>", methods=["POST", "GET"])
 def update(id):
 
@@ -120,8 +152,66 @@ def update(id):
 
         return redirect(url_for("portfolioManager"))
 
-    # redirect to update one user form
+    # Redirect to update one user form
     return render_template("update.html", user=user)
+
+
+#######################################
+####    Add Porfolio items
+######################################
+
+@app.route("/add", methods=["POST"])
+#1.Create Operation
+#postman input in body :
+# {"name":"L'escata",
+# "description": "I'm baby church-key synth banjo"
+# }
+def addPortfolioItem():
+    #Getting Input from (Postman) in JSON format
+    jsonvalue = request.json
+    #Picking the data from Variable
+    name =jsonvalue["name"]
+    description = jsonvalue["description"]
+    thumb_img_url = jsonvalue["thumb_img_url"]
+
+    # Estos datos los tendrás que obtener del formulario en React
+
+    if name and description and thumb_img_url and request.method=="POST":
+        id = mongo.db.portfolio_items.insert_one(
+            {"name": name, "description": description, "thumb_img_url": thumb_img_url}
+        )
+        response = jsonify(
+            {
+                "_id": str(id),
+                "name": name,
+                "thumb_img_url": thumb_img_url,
+                "description": description,
+            }
+        )
+        response.status_code = 201
+        return "It is working and you are doing your best"
+    else:
+        return "not_found"
+
+#######################################
+####    Get all portfolio items
+######################################
+@app.route("/portfolio", methods=["GET"])
+def getPortfolioItems():
+    portfolioItems = mongo.db.portfolio_items.find()
+    response = json_util.dumps(portfolioItems)
+    return Response(response, mimetype="application/json")
+
+
+#######################################
+####    Get one portfolio item
+######################################
+@app.route("/portfolio/<id>", methods=["GET"])
+def getPortfolioItem(id):
+    portfolioItem = mongo.db.portfolio_items.find_one({"_id": ObjectId(id)})
+    response = json_util.dumps(portfolioItem)
+    return Response(response, mimetype="application/json")
+
 
 
 @app.errorhandler(404)
