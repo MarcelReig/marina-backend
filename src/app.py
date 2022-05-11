@@ -8,6 +8,7 @@ from flask import (
     url_for,
     session,
 )
+from pymongo import MongoClient
 from flask_pymongo import PyMongo
 from bson import json_util
 from bson.objectid import ObjectId
@@ -19,10 +20,12 @@ from werkzeug.security import generate_password_hash
 app = Flask(__name__)
 CORS(app)
 
-app.config["MONGO_URI"] = "mongodb://localhost/marinaDatabase"
+# Atlas connection
+cluster = MongoClient("mongodb+srv://MarcelReig:FXXjgXIl4qtwXF5V@cluster0.5mwmz.mongodb.net/marina-back-end?retryWrites=true&w=majority")
 
-mongo = PyMongo(app)
+mongo = cluster["marina_db"]
 
+# secret key para la session
 app.secret_key = "6+8zZ69dzChLZCU9h=XE+Gren}fnRV"
 
 
@@ -65,7 +68,7 @@ def portfolioManager():
     # Añadir encriptacion a la contraseña con generate_password_hash
 
     if session["user"] == "marcel@ibm.com" and session["password"] == "abcd1234":
-        users = mongo.db.users.find()
+        users = mongo.users.find()
         return render_template("manager.html", users=users)
     else:
         return "You do not have permission to view this"
@@ -82,7 +85,7 @@ def createUser():
 
     if username and email and password:
         hashed_password = generate_password_hash(password)
-        id = mongo.db.users.insert_one(
+        id = mongo.users.insert_one(
             {"username": username, "email": email, "password": hashed_password}
         )
         response = jsonify(
@@ -99,7 +102,7 @@ def createUser():
 ######################################
 @app.route("/users", methods=["GET"])
 def getUsers():
-    users = mongo.db.users.find()
+    users = mongo.users.find()
     response = json_util.dumps(users)
     return Response(response, mimetype="application/json")
 
@@ -109,7 +112,7 @@ def getUsers():
 ######################################
 @app.route("/users/<id>", methods=["GET"])
 def getUser(id):
-    user = mongo.db.users.find_one({"_id": ObjectId(id)})
+    user = mongo.users.find_one({"_id": ObjectId(id)})
     response = json_util.dumps(user)
     return Response(response, mimetype="application/json")
 
@@ -119,7 +122,7 @@ def getUser(id):
 ######################################
 @app.route("/delete/<id>", methods=["DELETE", "GET"])
 def delete(id):
-    mongo.db.users.delete_one({"_id": ObjectId(id)})
+    mongo.users.delete_one({"_id": ObjectId(id)})
     response = jsonify({"message": "User" + id + " Deleted Successfully"})
     response.status_code = 200
     return redirect(url_for("portfolioManager"))
@@ -131,10 +134,10 @@ def delete(id):
 @app.route("/update/<id>", methods=["POST", "GET"])
 def update(id):
 
-    user = mongo.db.users.find_one({"_id": ObjectId(id)})
+    user = mongo.users.find_one({"_id": ObjectId(id)})
 
     if request.method == "POST":
-        mongo.db.users.update_one(
+        mongo.users.update_one(
             {"_id": ObjectId(id)},
             {
                 "$set": {
@@ -146,7 +149,7 @@ def update(id):
         )
         newPassword = request.form["password"]
         hashed_password = generate_password_hash(newPassword)
-        mongo.db.users.update_one(
+        mongo.users.update_one(
             {"_id": ObjectId(id)}, {"$set": {"password": hashed_password}}
         )
 
@@ -160,25 +163,32 @@ def update(id):
 ####    Add Porfolio items
 ######################################
 
+
 @app.route("/add", methods=["POST"])
-#1.Create Operation
-#postman input in body :
+# 1.Create Operation
+# postman input in body :
 # {"name":"L'escata",
 # "description": "I'm baby church-key synth banjo"
 # }
 def addPortfolioItem():
-    #Getting Input from (Postman) in JSON format
+    # Getting Input from (Postman) in JSON format
     jsonvalue = request.json
-    #Picking the data from Variable
-    name =jsonvalue["name"]
+    # Picking the data from Variable
+    name = jsonvalue["name"]
     description = jsonvalue["description"]
     thumb_img_url = jsonvalue["thumb_img_url"]
+    gallery = jsonvalue["gallery"]
 
-    # Estos datos los tendrás que obtener del formulario en React
+    # Obteniendo los datos desde React
 
-    if name and description and thumb_img_url and request.method=="POST":
-        id = mongo.db.portfolio_items.insert_one(
-            {"name": name, "description": description, "thumb_img_url": thumb_img_url}
+    if name and description and thumb_img_url and gallery and request.method == "POST":
+        id = mongo.portfolio_items.insert_one(
+            {
+                "name": name,
+                "description": description,
+                "thumb_img_url": thumb_img_url,
+                "gallery": gallery,
+            }
         )
         response = jsonify(
             {
@@ -186,19 +196,21 @@ def addPortfolioItem():
                 "name": name,
                 "thumb_img_url": thumb_img_url,
                 "description": description,
+                "gallery": gallery,
             }
         )
         response.status_code = 201
-        return "It is working and you are doing your best"
+        return response
     else:
         return "not_found"
+
 
 #######################################
 ####    Get all portfolio items
 ######################################
 @app.route("/portfolio", methods=["GET"])
 def getPortfolioItems():
-    portfolioItems = mongo.db.portfolio_items.find()
+    portfolioItems = mongo.portfolio_items.find()
     response = json_util.dumps(portfolioItems)
     return Response(response, mimetype="application/json")
 
@@ -208,10 +220,25 @@ def getPortfolioItems():
 ######################################
 @app.route("/portfolio/<id>", methods=["GET"])
 def getPortfolioItem(id):
-    portfolioItem = mongo.db.portfolio_items.find_one({"_id": ObjectId(id)})
+    portfolioItem = mongo.portfolio_items.find_one({"_id": ObjectId(id)})
     response = json_util.dumps(portfolioItem)
     return Response(response, mimetype="application/json")
 
+
+#######################################
+####    Delete one portfolio item
+######################################
+@app.route("/portfolio/<id>", methods=["DELETE"])
+def deletePfolioItem(id):
+    mongo.portfolio_items.delete_one({"_id": ObjectId(id)})
+    response = jsonify({"message": "Portfolio item" + id + " Deleted Successfully"})
+    response.status_code = 200
+    return Response(response, mimetype="application/json")
+
+
+#######################################
+####
+######################################
 
 
 @app.errorhandler(404)

@@ -10,6 +10,8 @@ flask-cors = "*"
 requests = "*"
 flask-login = "*"
 flask-wtf = "*"
+flask-jwt-extended = "*"
+pymongo = {extras = ["srv"], version = "*"}
 
 [dev-packages]
 
