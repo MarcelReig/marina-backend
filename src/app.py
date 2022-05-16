@@ -21,7 +21,9 @@ app = Flask(__name__)
 CORS(app)
 
 # Atlas connection
-cluster = MongoClient("mongodb+srv://MarcelReig:FXXjgXIl4qtwXF5V@cluster0.5mwmz.mongodb.net/marina-back-end?retryWrites=true&w=majority")
+cluster = MongoClient(
+    "mongodb+srv://MarcelReig:FXXjgXIl4qtwXF5V@cluster0.5mwmz.mongodb.net/marina-back-end?retryWrites=true&w=majority"
+)
 
 mongo = cluster["marina_db"]
 
@@ -65,7 +67,6 @@ def logout():
 @app.route("/manager")
 def portfolioManager():
     # Comparar el email y la contraseña del formulario con la base de datos
-    # Añadir encriptacion a la contraseña con generate_password_hash
 
     if session["user"] == "marcel@ibm.com" and session["password"] == "abcd1234":
         users = mongo.users.find()
@@ -165,11 +166,6 @@ def update(id):
 
 
 @app.route("/add", methods=["POST"])
-# 1.Create Operation
-# postman input in body :
-# {"name":"L'escata",
-# "description": "I'm baby church-key synth banjo"
-# }
 def addPortfolioItem():
     # Getting Input from (Postman) in JSON format
     jsonvalue = request.json
@@ -180,7 +176,6 @@ def addPortfolioItem():
     gallery = jsonvalue["gallery"]
 
     # Obteniendo los datos desde React
-
     if name and description and thumb_img_url and gallery and request.method == "POST":
         id = mongo.portfolio_items.insert_one(
             {
