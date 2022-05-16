@@ -12,6 +12,7 @@ flask-login = "*"
 flask-wtf = "*"
 flask-jwt-extended = "*"
 pymongo = {extras = ["srv"], version = "*"}
+gunicorn = "*"
 
 [dev-packages]
 
