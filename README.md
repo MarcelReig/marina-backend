@@ -7,7 +7,8 @@
 - Python
 - pymongo
 - mongodb + Atlas
-- Jinja motor de plantillas python Bootstrap 5
+- Jinja
+- Bootstrap 5
 - SCSS
 - GitHub
 - Heroku
