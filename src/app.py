@@ -34,8 +34,6 @@ app.secret_key = "6+8zZ69dzChLZCU9h=XE+Gren}fnRV"
 ######################
 ####    Routes
 #####################
-
-
 @app.route("/")
 def index():
     return render_template("login.html")
@@ -163,8 +161,6 @@ def update(id):
 #######################################
 ####    Add Porfolio items
 ######################################
-
-
 @app.route("/add", methods=["POST"])
 def addPortfolioItem():
     # Getting Input from (Postman) in JSON format
@@ -230,6 +226,51 @@ def deletePfolioItem(id):
     response.status_code = 200
     return Response(response, mimetype="application/json")
 
+
+#######################################
+####    Add items to store
+######################################
+@app.route("/store", methods=["POST"])
+def addStoreItem():
+    # Getting Input from (Postman) in JSON format
+    jsonvalue = request.json
+    # Picking the data from Variable
+    name = jsonvalue["name"]
+    price = jsonvalue["price"]
+    description = jsonvalue["description"]
+    image = jsonvalue["image"]
+
+    # Obteniendo los datos desde React
+    if name and description and image and request.method == "POST":
+        id = mongo.store_items.insert_one(
+            {
+                "name": name,
+                "price": price,
+                "description": description,
+                "image": image,
+            }
+        )
+        response = jsonify(
+            {
+                "_id": str(id),
+                "price": price,
+                "description": description,
+                "image": image,
+            }
+        )
+        response.status_code = 201
+        return response
+    else:
+        return "not_found"
+
+#######################################
+####    Get all store items
+######################################
+@app.route("/store", methods=["GET"])
+def getStoreItems():
+    storeItems = mongo.store_items.find()
+    response = json_util.dumps(storeItems)
+    return Response(response, mimetype="application/json")
 
 #######################################
 ####
