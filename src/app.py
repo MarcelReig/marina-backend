@@ -241,7 +241,7 @@ def addStoreItem():
     image = jsonvalue["image"]
 
     # Obteniendo los datos desde React
-    if name and description and image and request.method == "POST":
+    if name and price and description and image and request.method == "POST":
         id = mongo.store_items.insert_one(
             {
                 "name": name,
@@ -253,6 +253,7 @@ def addStoreItem():
         response = jsonify(
             {
                 "_id": str(id),
+                "name": name,
                 "price": price,
                 "description": description,
                 "image": image,
