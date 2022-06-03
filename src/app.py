@@ -272,6 +272,15 @@ def getStoreItems():
     response = json_util.dumps(storeItems)
     return Response(response, mimetype="application/json")
 
+#######################################
+####    Get one store item
+######################################
+@app.route("/store/<id>", methods=["GET"])
+def getStoreItem(id):
+    storeItem = mongo.store_items.find_one({"_id": ObjectId(id)})
+    response = json_util.dumps(storeItem)
+    return Response(response, mimetype="application/json")
+
 
 #######################################
 ####    Delete one store item
