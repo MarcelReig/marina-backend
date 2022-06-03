@@ -272,6 +272,18 @@ def getStoreItems():
     response = json_util.dumps(storeItems)
     return Response(response, mimetype="application/json")
 
+
+#######################################
+####    Delete one store item
+######################################
+@app.route("/store/<id>", methods=["DELETE"])
+def deleteStoreItem(id):
+    mongo.store_items.delete_one({"_id": ObjectId(id)})
+    response = jsonify({"message": "Store item" + id + " Deleted Successfully"})
+    response.status_code = 200
+    return Response(response, mimetype="application/json")
+
+
 #######################################
 ####
 ######################################
