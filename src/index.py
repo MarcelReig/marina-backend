@@ -22,7 +22,7 @@ CORS(app)
 
 # Atlas connection
 cluster = MongoClient(
-    "mongodb+srv://MarcelReig:FXXjgXIl4qtwXF5V@cluster0.5mwmz.mongodb.net/marina-back-end?retryWrites=true&w=majority"
+    "mongodb+srv://MarcelReig:Ml00TSOSq4CBTsMN@cluster0.5mwmz.mongodb.net/?retryWrites=true&w=majority"
 )
 
 mongo = cluster["marina_db"]
