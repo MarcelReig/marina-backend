@@ -11,9 +11,9 @@
 - Bootstrap 5
 - SCSS
 - GitHub
-- Heroku
+- Vercel
 - Postman
 
 ### Live version: 
 
-- [Heroku app](https://marina-backend.herokuapp.com/)
+- [Vercel app](https://marina-back-end.vercel.app/)
