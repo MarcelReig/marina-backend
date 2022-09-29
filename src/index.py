@@ -22,7 +22,7 @@ CORS(app)
 
 # Atlas connection
 cluster = MongoClient(
-    "mongodb+srv://MarcelReig:Ml00TSOSq4CBTsMN@cluster0.5mwmz.mongodb.net/?retryWrites=true&w=majority"
+    "mongodb+srv://MarcelReig:Ml00TSOSq4CBTsMN@cluster0.5mwmz.mongodb.net/marina-back-end?retryWrites=true&w=majority"
 )
 
 mongo = cluster["marina_db"]
@@ -199,7 +199,7 @@ def addPortfolioItem():
 #######################################
 ####    Get all portfolio items
 ######################################
-@app.route("/portfolioitems", methods=["GET"])
+@app.route("/portfolio", methods=["GET"])
 def getPortfolioItems():
     portfolioItems = mongo.portfolio_items.find()
     response = json_util.dumps(portfolioItems)
@@ -209,7 +209,7 @@ def getPortfolioItems():
 #######################################
 ####    Get one portfolio item
 ######################################
-@app.route("/portfolioitems/<id>", methods=["GET"])
+@app.route("/portfolio/<id>", methods=["GET"])
 def getPortfolioItem(id):
     portfolioItem = mongo.portfolio_items.find_one({"_id": ObjectId(id)})
     response = json_util.dumps(portfolioItem)
@@ -219,7 +219,7 @@ def getPortfolioItem(id):
 #######################################
 ####    Delete one portfolio item
 ######################################
-@app.route("/portfolioitems/<id>", methods=["DELETE"])
+@app.route("/portfolio/<id>", methods=["DELETE"])
 def deletePfolioItem(id):
     mongo.portfolio_items.delete_one({"_id": ObjectId(id)})
     response = jsonify({"message": "Portfolio item" + id + " Deleted Successfully"})
