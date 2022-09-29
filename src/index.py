@@ -199,7 +199,7 @@ def addPortfolioItem():
 #######################################
 ####    Get all portfolio items
 ######################################
-@app.route("/portfolio", methods=["GET"])
+@app.route("/portfolioitems", methods=["GET"])
 def getPortfolioItems():
     portfolioItems = mongo.portfolio_items.find()
     response = json_util.dumps(portfolioItems)
@@ -209,7 +209,7 @@ def getPortfolioItems():
 #######################################
 ####    Get one portfolio item
 ######################################
-@app.route("/portfolio/<id>", methods=["GET"])
+@app.route("/portfolioitems/<id>", methods=["GET"])
 def getPortfolioItem(id):
     portfolioItem = mongo.portfolio_items.find_one({"_id": ObjectId(id)})
     response = json_util.dumps(portfolioItem)
@@ -219,7 +219,7 @@ def getPortfolioItem(id):
 #######################################
 ####    Delete one portfolio item
 ######################################
-@app.route("/portfolio/<id>", methods=["DELETE"])
+@app.route("/portfolioitems/<id>", methods=["DELETE"])
 def deletePfolioItem(id):
     mongo.portfolio_items.delete_one({"_id": ObjectId(id)})
     response = jsonify({"message": "Portfolio item" + id + " Deleted Successfully"})
