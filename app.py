@@ -297,7 +297,6 @@ def deleteStoreItem(id):
 #######################################
 ####
 ######################################
-
 @app.errorhandler(404)
 def not_found(error=None):
     message = {"message": "Resource Not Found " + request.url, "status": 404}
