@@ -35,7 +35,7 @@ app.secret_key = "6+8zZ69dzChLZCU9h=XE+Gren}fnRV"
 ####    Routes
 #####################
 @app.route("/")
-def app():
+def _app():
     return render_template("login.html")
 
 
