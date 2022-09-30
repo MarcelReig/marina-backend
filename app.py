@@ -42,21 +42,21 @@ def app():
 ######################
 ####    Login
 #####################
-@app.route("/login", methods=["GET", "POST"])
-def login():
+# @app.route("/login", methods=["GET", "POST"])
+# def login():
 
-    if request.method == "POST":
-        session["user"] = request.form["email"]
-        session["password"] = request.form["password"]
-        return redirect(url_for("portfolioManager"))
-    else:
-        return "bad request"
+#     if request.method == "POST":
+#         session["user"] = request.form["email"]
+#         session["password"] = request.form["password"]
+#         return redirect(url_for("portfolioManager"))
+#     else:
+#         return "bad request"
 
 
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("app"))
+# @app.route("/logout")
+# def logout():
+#     session.clear()
+#     return redirect(url_for("app"))
 
 
 #######################################
