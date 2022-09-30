@@ -6,14 +6,13 @@
 
 - Python
 - pymongo
-- mongodb + Atlas
+- MongoDB + Atlas
 - Jinja
 - Bootstrap 5
 - SCSS
 - GitHub
-- Vercel
 - Postman
 
 ### Live version: 
 
-- [Vercel app](https://marina-back-end.vercel.app/)
+- [Digital Ocean app](adfgadgadg)
