@@ -35,7 +35,7 @@ app.secret_key = "6+8zZ69dzChLZCU9h=XE+Gren}fnRV"
 ####    Routes
 #####################
 @app.route("/")
-def index():
+def app():
     return render_template("login.html")
 
 
@@ -56,7 +56,7 @@ def login():
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("index"))
+    return redirect(url_for("app"))
 
 
 #######################################
