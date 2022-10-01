@@ -12,7 +12,8 @@
 - SCSS
 - GitHub
 - Postman
+- Digitalocean
 
 ### Live version: 
 
-- [Digital Ocean app](adfgadgadg)
+- [Digitalocean Flask app](https://marina-back-end-wjnsy.ondigitalocean.app/)
