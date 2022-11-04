@@ -4,7 +4,7 @@
 
 ### I have used:
 
-- Python
+- Python 3.9
 - pymongo
 - MongoDB + Atlas
 - Jinja
@@ -17,3 +17,14 @@
 ### Live version: 
 
 - [Digitalocean Flask app](https://marina-back-end-wjnsy.ondigitalocean.app/)
+
+### Open pipenv shell:
+
+```
+$ pipenv shell
+```
+
+### Run flask: 
+```
+$ flask run
+```
