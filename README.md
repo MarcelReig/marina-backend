@@ -12,11 +12,11 @@
 - SCSS
 - GitHub
 - Postman
-- Digitalocean
+- Deploy on Render
 
 ### Live version: 
 
-- [Digitalocean Flask app](https://marina-back-end-wjnsy.ondigitalocean.app/)
+- [Render Flask app](https://marina-backend.onrender.com/)
 
 ### Open pipenv shell:
 
