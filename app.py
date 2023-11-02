@@ -73,7 +73,7 @@ def create_token():
 
 @app.after_request
 def _after_request(response):
-    response.headers["Access-Control-Allow-Origin"] = "https://marina-backend.onrender.com/"
+    response.headers["Access-Control-Allow-Origin"] = "https://king-prawn-app-dr5rk.ondigitalocean.app/"
     response.headers["Access-Control-Allow-Credentials"] = "true"
     response.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS, PUT, DELETE"
     response.headers["Access-Control-Allow-Headers"] = "Accept, Content-Type, Content-Length, Accept-Encoding, " \
