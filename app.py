@@ -27,7 +27,7 @@ load_dotenv()
 # Create Flask app
 app = Flask(__name__)
 # Edited for dev
-CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
+CORS(app, supports_credentials=True, origins=["http://localhost:5173", "https://king-prawn-app-dr5rk.ondigitalocean.app"])
 app.config.from_object(DevelopmentConfig)
 
 
@@ -358,7 +358,9 @@ if __name__ == "__main__":
 
 @app.after_request
 def _after_request(response):
-    response.headers["Access-Control-Allow-Origin"] = "http://localhost:5173"
+    origin = request.headers.get('Origin')
+    if origin in ["http://localhost:5173", "https://king-prawn-app-dr5rk.ondigitalocean.app"]:
+        response.headers["Access-Control-Allow-Origin"] = origin
     response.headers["Access-Control-Allow-Credentials"] = "true"
     response.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS, PUT, DELETE"
     response.headers["Access-Control-Allow-Headers"] = "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization"
