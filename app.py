@@ -85,16 +85,6 @@ def create_token():
     return response
 
 
-@app.after_request
-def _after_request(response):
-    response.headers["Access-Control-Allow-Origin"] = "https://king-prawn-app-dr5rk.ondigitalocean.app"
-    response.headers["Access-Control-Allow-Credentials"] = "true"
-    response.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS, PUT, DELETE"
-    response.headers["Access-Control-Allow-Headers"] = "Accept, Content-Type, Content-Length, Accept-Encoding, " \
-                                                       "X-CSRF-Token, Authorization "
-    return response
-
-
 # ---------------------------------------------------------------------------- #
 #    Login from flask with session
 # ---------------------------------------------------------------------------- #
