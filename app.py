@@ -21,6 +21,7 @@ from flask_jwt_extended import JWTManager
 from werkzeug.security import generate_password_hash
 from dotenv import load_dotenv
 from config import DevelopmentConfig
+import base64
 
 load_dotenv()
 
