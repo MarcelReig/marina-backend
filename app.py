@@ -57,7 +57,7 @@ def _after_request(response):
     if origin in ["http://localhost:5173", "https://king-prawn-app-dr5rk.ondigitalocean.app"]:
         response.headers["Access-Control-Allow-Origin"] = origin
     response.headers["Access-Control-Allow-Credentials"] = "true"
-    response.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS, PUT, DELETE, ADD"
+    response.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS, PUT, DELETE"
     response.headers["Access-Control-Allow-Headers"] = "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization"
     return response
 
@@ -211,7 +211,7 @@ def update(id):
 # ---------------------------------------------------------------------------- #
 @app.route("/add", methods=["POST"])
 def add_portfolio_item():
-    # Getting Input from (Postman) in JSON format
+    # Getting Input in JSON format
     jsonvalue = request.json
     # Picking the data from Variable
     name = jsonvalue["name"]
@@ -221,7 +221,7 @@ def add_portfolio_item():
 
     # Obteniendo los datos desde React
     if name and description and thumb_img_url and gallery and request.method == "POST":
-        id = mongo.portfolio_items.insert_one(
+        result = mongo.portfolio_items.insert_one(
             {
                 "name": name,
                 "description": description,
@@ -231,7 +231,7 @@ def add_portfolio_item():
         )
         response = jsonify(
             {
-                "_id": str(id),
+                "_id": str(result.inserted_id),
                 "name": name,
                 "thumb_img_url": thumb_img_url,
                 "description": description,
