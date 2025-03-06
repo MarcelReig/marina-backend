@@ -87,9 +87,6 @@ def create_token():
     return response
 
 
-
-
-
 # ---------------------------------------------------------------------------- #
 #    Login from flask with session
 # ---------------------------------------------------------------------------- #
@@ -134,11 +131,11 @@ def create_user():
 
     if username and email and password:
         hashed_password = generate_password_hash(password)
-        id = mongo.users.insert_one(
+        result = mongo.users.insert_one(
             {"username": username, "email": email, "password": hashed_password}
         )
         response = jsonify(
-            {"_id": str(id), "username": username, "password": password, "email": email}
+            {"_id": str(result.inserted_id), "username": username, "password": password, "email": email}
         )
         response.status_code = 201
         return redirect(url_for("portfolio_manager"))
@@ -271,7 +268,7 @@ def get_portfolio_item(id):
 @app.route("/portfolio/<id>", methods=["DELETE"])
 def delete_portfolio_item(id):
     mongo.portfolio_items.delete_one({"_id": ObjectId(id)})
-    response = jsonify({"message": "Portfolio item" + id + " Deleted Successfully"})
+    response = jsonify({"message": "Portfolio item " + id + " Deleted Successfully"})
     response.status_code = 200
     return Response(response, mimetype="application/json")
 
@@ -291,7 +288,7 @@ def add_store_item():
 
     # Obteniendo los datos desde React
     if name and price and description and image and request.method == "POST":
-        id = mongo.store_items.insert_one(
+        result = mongo.store_items.insert_one(
             {
                 "name": name,
                 "price": price,
@@ -301,7 +298,7 @@ def add_store_item():
         )
         response = jsonify(
             {
-                "_id": str(id),
+                "_id": str(result.inserted_id),
                 "name": name,
                 "price": price,
                 "description": description,
@@ -340,7 +337,7 @@ def get_one_store_item(id):
 @app.route("/store/<id>", methods=["DELETE"])
 def delete_one_store_item(id):
     mongo.store_items.delete_one({"_id": ObjectId(id)})
-    response = jsonify({"message": "Store item" + id + " Deleted Successfully"})
+    response = jsonify({"message": "Store item " + id + " Deleted Successfully"})
     response.status_code = 200
     return Response(response, mimetype="application/json")
 
