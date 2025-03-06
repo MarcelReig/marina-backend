@@ -336,10 +336,18 @@ def get_one_store_item(id):
 # ---------------------------------------------------------------------------- #
 @app.route("/store/<id>", methods=["DELETE"])
 def delete_one_store_item(id):
-    mongo.store_items.delete_one({"_id": ObjectId(id)})
-    response = jsonify({"message": "Store item " + id + " Deleted Successfully"})
-    response.status_code = 200
-    return Response(response, mimetype="application/json")
+    try:
+        result = mongo.store_items.delete_one({"_id": ObjectId(id)})
+        if result.deleted_count == 1:
+            response = jsonify({"message": "Store item " + id + " Deleted Successfully"})
+            response.status_code = 200
+        else:
+            response = jsonify({"message": "Store item " + id + " Not Found"})
+            response.status_code = 404
+    except Exception as e:
+        response = jsonify({"message": "An error occurred: " + str(e)})
+        response.status_code = 500
+    return response
 
 
 # ---------------------------------------------------------------------------- #
