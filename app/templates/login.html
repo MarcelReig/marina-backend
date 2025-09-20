@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Portfolio manager Login{% endblock %}
+{% block content %}
+<div class="form-signin-wrapper">
+<main class="form-signin text-center">
+  
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  
+  <form action="{{ url_for('admin.login') }}" method="post">
+    <img class="mb-4" src="{{ url_for('static', filename='img/logo.png')}}" alt="logo" width="100">
+    <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+    
+    <div class="form-floating">
+      <input name="email" type="email" class="form-control" id="floatingInput" 
+             placeholder="name@example.com" required>
+      <label for="floatingInput">Email address</label>
+    </div>
+    <div class="form-floating">
+      <input name="password" type="password" class="form-control" id="floatingPassword" 
+             placeholder="Password" required>
+      <label for="floatingPassword">Password</label>
+    </div>
+
+    <button class="w-100 btn btn-lg btn-outline-dark" type="submit">Sign in</button>
+    
+    
+  </form>
+</main>
+</div>
+{% endblock %}

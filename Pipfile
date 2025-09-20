@@ -14,6 +14,9 @@ flask-jwt-extended = "*"
 pymongo = {extras = ["srv"], version = "*"}
 gunicorn = "*"
 python-dotenv = "*"
+cloudinary = "*"
+wtforms = "*"
+email-validator = "*"
 
 [dev-packages]
 

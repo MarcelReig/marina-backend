@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Actualizar Usuario{% endblock %}
+{% block content %}
+{% include "navbar.html" %}
+
+<div class="container p-4">
+  
+  <!-- Breadcrumb Navigation -->
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{{ url_for('admin.portfolio_manager') }}">Dashboard</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Actualizar Usuario</li>
+    </ol>
+  </nav>
+  
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h5 class="card-title mb-0">
+            <i class="fa-solid fa-user-edit me-2"></i>
+            Actualizar Usuario: {{ user.username }}
+          </h5>
+        </div>
+        <div class="card-body">
+          
+          <!-- Mensajes Flash -->
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                  <i class="fa-solid fa-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' }} me-2"></i>
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+
+          <!-- Información del Usuario -->
+          <div class="alert alert-info mb-4">
+            <i class="fa-solid fa-info-circle me-2"></i>
+            <strong>Usuario actual:</strong> {{ user.username }} ({{ user.email }})<br>
+            <small class="text-muted">
+              <i class="fa-solid fa-shield-alt me-1"></i>
+              Rol: <span class="badge bg-{{ 'primary' if user.role == 'admin' else 'secondary' }}">{{ user.role or 'user' }}</span>
+            </small>
+          </div>
+
+          <!-- Formulario de Actualización -->
+          <form action="{{ url_for('admin.update_user', id=user._id) }}" method="POST" id="updateForm" onsubmit="return confirm('¿Confirmar actualización de este usuario?')">
+            {{ form.hidden_tag() }}
+            
+            <div class="mb-3">
+              <label for="username" class="form-label">
+                <i class="fa-solid fa-user me-2"></i>Nombre de Usuario
+              </label>
+              {{ form.username(class="form-control", id="username") }}
+              {% if form.username.errors %}
+                <div class="text-danger small mt-1">
+                  <i class="fa-solid fa-exclamation-circle me-1"></i>
+                  {{ form.username.errors[0] }}
+                </div>
+              {% endif %}
+            </div>
+            
+            <div class="mb-3">
+              <label for="email" class="form-label">
+                <i class="fa-solid fa-envelope me-2"></i>Email
+              </label>
+              {{ form.email(class="form-control", id="email") }}
+              {% if form.email.errors %}
+                <div class="text-danger small mt-1">
+                  <i class="fa-solid fa-exclamation-circle me-1"></i>
+                  {{ form.email.errors[0] }}
+                </div>
+              {% endif %}
+            </div>
+            
+            <div class="mb-4">
+              <label for="password" class="form-label">
+                <i class="fa-solid fa-lock me-2"></i>Nueva Contraseña
+              </label>
+              {{ form.password(class="form-control", id="password") }}
+              <div class="form-text">
+                <i class="fa-solid fa-info-circle me-1"></i>
+                Dejar vacío para mantener la contraseña actual
+              </div>
+              {% if form.password.errors %}
+                <div class="text-danger small mt-1">
+                  <i class="fa-solid fa-exclamation-circle me-1"></i>
+                  {{ form.password.errors[0] }}
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="d-flex gap-2">
+              {{ form.submit(class="btn btn-primary flex-grow-1") }}
+              <a href="{{ url_for('admin.portfolio_manager') }}" class="btn btn-outline-secondary">
+                <i class="fa-solid fa-arrow-left me-2"></i>Cancelar
+              </a>
+            </div>
+          </form>
+        </div>
+        
+        <!-- Footer con información adicional -->
+        <div class="card-footer text-muted">
+          <small>
+            <i class="fa-solid fa-clock me-1"></i>
+            Última modificación: {{ user.get('updated_at', 'No disponible') }}
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
