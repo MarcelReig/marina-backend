@@ -58,7 +58,8 @@ def init_extensions(app):
     CORS(app, supports_credentials=True, origins=[
         "http://localhost:5173", 
         "http://localhost:5174",
-        "https://king-prawn-app-dr5rk.ondigitalocean.app"
+        "https://king-prawn-app-dr5rk.ondigitalocean.app",
+        "https://marina-ilustracion.netlify.app"
     ])
     
     # JWT
