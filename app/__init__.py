@@ -55,10 +55,18 @@ def init_extensions(app):
     global mongo, jwt
     
     # CORS
-    CORS(app, supports_credentials=True, origins=[
-        "http://localhost:5173", 
-        "https://marina-ibarra.netlify.app/",
-    ])
+    CORS(
+        app,
+        supports_credentials=True,
+        resources={
+            r"/api/*": {
+                "origins": [
+                    "http://localhost:5173",
+                    "https://marina-ibarra.netlify.app",
+                ]
+            }
+        },
+    )
     
     # JWT
     jwt = JWTManager(app)
