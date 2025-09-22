@@ -15,7 +15,8 @@ portfolio_bp = Blueprint('portfolio', __name__)
 @portfolio_bp.route('/portfolio', methods=['GET'])
 def get_portfolio_items():
     """Get all portfolio items (public endpoint)"""
-    portfolio_items = mongo.portfolio_items.find()
+    # Sort by display_order (ascending), then by _id for items without order
+    portfolio_items = mongo.portfolio_items.find().sort([("display_order", 1), ("_id", 1)])
     response = json_util.dumps(portfolio_items)
     return Response(response, mimetype="application/json")
 
@@ -53,7 +54,7 @@ def update_portfolio_item(id):
             return jsonify({"error": "Missing required fields: name, description, thumb_img_url, gallery"}), 400
         
         # Only upload to Cloudinary if it's base64 data (new images)
-        if thumb_img_data.startswith('data:image'):
+        if thumb_img_data and isinstance(thumb_img_data, str) and thumb_img_data.startswith('data:image'):
             thumb_url, _, error = CloudinaryService.upload_portfolio_images(thumb_img_data, [])
             if error:
                 return jsonify({"error": error}), 500
@@ -62,6 +63,9 @@ def update_portfolio_item(id):
             
         # Process gallery images
         gallery_urls = []
+        if not isinstance(gallery_data, list):
+            return jsonify({"error": "Gallery data must be a list"}), 400
+        
         for img_data in gallery_data:
             if isinstance(img_data, str) and img_data.startswith('data:image'):
                 # New image - upload to Cloudinary
@@ -99,7 +103,10 @@ def update_portfolio_item(id):
         return jsonify(response), 200
         
     except Exception as e:
-        return jsonify({"error": "Database error"}), 500
+        import traceback
+        print(f"Portfolio update error: {str(e)}")
+        print(f"Traceback: {traceback.format_exc()}")
+        return jsonify({"error": f"Error al actualizar el álbum: {str(e)}"}), 500
 
 
 @portfolio_bp.route('/portfolio', methods=['POST'])
@@ -127,6 +134,13 @@ def add_portfolio_item():
     if error:
         return jsonify({"error": error}), 500
     
+    # Get next display_order (highest + 1)
+    last_item = mongo.portfolio_items.find().sort("display_order", -1).limit(1)
+    next_order = 1
+    for item in last_item:
+        next_order = item.get("display_order", 0) + 1
+        break
+    
     # Save to database
     try:
         result = mongo.portfolio_items.insert_one({
@@ -134,6 +148,7 @@ def add_portfolio_item():
             "description": description,
             "thumb_img_url": thumb_url,
             "gallery": gallery_urls,
+            "display_order": next_order,
         })
         
         response = {
@@ -148,6 +163,42 @@ def add_portfolio_item():
         
     except Exception as e:
         return jsonify({"error": "Database error"}), 500
+
+
+@portfolio_bp.route('/portfolio/reorder', methods=['PUT'])
+@admin_required
+def reorder_portfolio_items():
+    """Reorder portfolio items (admin only)"""
+    try:
+        data = request.get_json()
+        if not data or "items" not in data:
+            return jsonify({"error": "Items array required"}), 400
+        
+        items = data["items"]
+        if not isinstance(items, list):
+            return jsonify({"error": "Items must be an array"}), 400
+        
+        # Update display_order for each item
+        for index, item in enumerate(items):
+            item_id = item.get("id")
+            if not item_id:
+                continue
+                
+            try:
+                # Update the display_order field
+                mongo.portfolio_items.update_one(
+                    {"_id": ObjectId(item_id)},
+                    {"$set": {"display_order": index + 1}}
+                )
+            except Exception as e:
+                print(f"Error updating item {item_id}: {str(e)}")
+                continue
+        
+        return jsonify({"message": "Portfolio order updated successfully"}), 200
+        
+    except Exception as e:
+        print(f"Reorder error: {str(e)}")
+        return jsonify({"error": "Failed to reorder portfolio items"}), 500
 
 
 @portfolio_bp.route('/portfolio/<id>', methods=['DELETE'])

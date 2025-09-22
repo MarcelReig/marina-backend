@@ -4,6 +4,7 @@ Authentication API endpoints
 
 from flask import Blueprint, request, jsonify
 from app.services.auth_service import AuthService
+from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
 from app.utils.validators import validate_password, validate_email
 
 auth_bp = Blueprint('auth', __name__)
@@ -62,3 +63,12 @@ def create_admin():
     # Create admin user
     result, status_code = AuthService.create_admin_user(email, password, username)
     return jsonify(result), status_code
+
+
+@auth_bp.route('/token/refresh', methods=['POST'])
+@jwt_required(refresh=True)
+def refresh_access_token():
+    """Refresh access token using refresh token"""
+    identity = get_jwt_identity()
+    access_token = create_access_token(identity=identity)
+    return jsonify({"access_token": access_token}), 200

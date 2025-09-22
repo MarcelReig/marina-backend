@@ -3,6 +3,7 @@ Application configuration settings
 """
 
 import os
+from datetime import timedelta
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -13,6 +14,9 @@ class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', '6+8zZ69dzChLZCU9h=XE+Gren}fnRV')
     MONGO_CLUSTER = os.getenv('ATLAS_URI')
     JWT_SECRET_KEY = os.getenv('JWT_SECRET')
+    # Increase access token lifetime to reduce unexpected logouts
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=8)
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=7)
     
     # WTF Forms
     WTF_CSRF_ENABLED = True

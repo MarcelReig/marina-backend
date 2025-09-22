@@ -4,7 +4,7 @@ Authentication service
 
 import os
 from flask import current_app
-from flask_jwt_extended import create_access_token, decode_token
+from flask_jwt_extended import create_access_token, create_refresh_token, decode_token
 from app.models.user import UserModel
 
 
@@ -31,8 +31,10 @@ class AuthService:
             return {"msg": "Wrong email or password"}, 401
         
         access_token = create_access_token(identity=email)
+        refresh_token = create_refresh_token(identity=email)
         response = {
             "access_token": access_token,
+            "refresh_token": refresh_token,
             "user": {
                 "email": user["email"],
                 "username": user["username"],
