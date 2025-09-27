@@ -57,7 +57,6 @@ def init_extensions(app):
     # CORS
     CORS(
         app,
-        supports_credentials=True,
         resources={
             r"/api/*": {
                 "origins": [
@@ -66,6 +65,9 @@ def init_extensions(app):
                 ]
             }
         },
+        supports_credentials=True,
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allow_headers=["Authorization", "Content-Type"],
     )
     
     # JWT

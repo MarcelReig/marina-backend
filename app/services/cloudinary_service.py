@@ -2,6 +2,7 @@
 Cloudinary service for image management
 """
 
+import os
 import cloudinary.uploader
 
 
@@ -20,10 +21,24 @@ class CloudinaryService:
             str or None: Secure URL if successful, None if failed
         """
         try:
+            upload_kwargs = {
+                "folder": folder,
+                "resource_type": "image",
+            }
+            # Use an upload preset if provided (to apply incoming transformations server-side)
+            preset = os.getenv("CLOUDINARY_UPLOAD_PRESET")
+            if preset:
+                upload_kwargs["upload_preset"] = preset
+
+            # Optionally restrict allowed formats (safe defaults)
+            allowed = os.getenv("CLOUDINARY_ALLOWED_FORMATS", "jpg,png,jpeg,webp,heic").split(",")
+            allowed = [fmt.strip() for fmt in allowed if fmt.strip()]
+            if allowed:
+                upload_kwargs["allowed_formats"] = allowed
+
             result = cloudinary.uploader.upload(
                 image_data,
-                folder=folder,
-                resource_type="image"
+                **upload_kwargs,
             )
             return result['secure_url']
         except Exception as e:

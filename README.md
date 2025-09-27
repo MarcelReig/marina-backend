@@ -212,6 +212,24 @@ curl -s -X POST http://127.0.0.1:8080/api/create-admin \
   -d '{"email":"nuevo@tuapp.com","password":"Marina123","username":"Editor"}'
 ```
 
+## Stripe 
+
+Para probar webhooks de Stripe en local necesitas el Stripe CLI.
+El flujo es:
+
+Inicias sesión con tu cuenta:
+
+```bash
+stripe login
+```
+
+
+Te suscribes a los eventos que quieres escuchar y los reenvías a tu backend local (ejemplo Flask en localhost:5000/webhook):
+
+```bash
+stripe listen --forward-to localhost:5000/webhook
+```
+
 ---
 
 *Built with ❤️ using modern Flask best practices*

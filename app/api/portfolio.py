@@ -126,13 +126,28 @@ def add_portfolio_item():
     if not all([name, description, thumb_img_data, gallery_data]):
         return jsonify({"error": "Missing required fields: name, description, thumb_img_url, gallery"}), 400
     
-    # Upload images to Cloudinary
-    thumb_url, gallery_urls, error = CloudinaryService.upload_portfolio_images(
-        thumb_img_data, gallery_data
-    )
-    
-    if error:
-        return jsonify({"error": error}), 500
+    # Accept either base64 data URLs (legacy) or direct Cloudinary/remote URLs (modern)
+    # Thumb
+    if isinstance(thumb_img_data, str) and thumb_img_data.startswith('data:image'):
+        thumb_url, _, error = CloudinaryService.upload_portfolio_images(thumb_img_data, [])
+        if error:
+            return jsonify({"error": error}), 500
+    else:
+        thumb_url = thumb_img_data  # assume URL already hosted (ideally in Cloudinary)
+
+    # Gallery
+    if not isinstance(gallery_data, list):
+        return jsonify({"error": "Gallery data must be a list"}), 400
+    gallery_urls = []
+    for img_data in gallery_data:
+        if isinstance(img_data, str) and img_data.startswith('data:image'):
+            img_url = CloudinaryService.upload_image(img_data, "portfolio/gallery")
+            if img_url:
+                gallery_urls.append(img_url)
+            else:
+                return jsonify({"error": "Failed to upload gallery image"}), 500
+        else:
+            gallery_urls.append(img_data)
     
     # Get next display_order (highest + 1)
     last_item = mongo.portfolio_items.find().sort("display_order", -1).limit(1)

@@ -3,6 +3,7 @@ Application configuration settings
 """
 
 import os
+import secrets
 from datetime import timedelta
 from dotenv import load_dotenv
 
@@ -11,7 +12,8 @@ load_dotenv()
 
 class Config:
     """Base configuration class"""
-    SECRET_KEY = os.getenv('SECRET_KEY', '6+8zZ69dzChLZCU9h=XE+Gren}fnRV')
+    # Use env SECRET_KEY in prod; otherwise generate a strong random key
+    SECRET_KEY = os.getenv('SECRET_KEY') or secrets.token_urlsafe(32)
     MONGO_CLUSTER = os.getenv('ATLAS_URI')
     JWT_SECRET_KEY = os.getenv('JWT_SECRET')
     # Increase access token lifetime to reduce unexpected logouts
